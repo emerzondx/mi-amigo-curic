@@ -9,7 +9,7 @@ interface DogCardProps {
 }
 
 export const DogCard = ({ dog }: DogCardProps) => {
-  const mainImage = `/src/assets/${dog.images[0]}`;
+  const mainImage = dog.images[0] || '/dogs/placeholder-1.jpg';
 
   return (
     <Card className="group overflow-hidden border-border transition-all duration-300 hover:shadow-[var(--shadow-soft)] animate-fade-in">

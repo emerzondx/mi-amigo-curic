@@ -42,7 +42,7 @@ export const ImageGallery = ({ images, alt }: ImageGalleryProps) => {
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             <img
-              src={`/src/assets/${image}`}
+              src={image}
               alt={`${alt} - Foto ${index + 1}`}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
             />
@@ -66,7 +66,7 @@ export const ImageGallery = ({ images, alt }: ImageGalleryProps) => {
             {selectedImage !== null && (
               <>
                 <img
-                  src={`/src/assets/${images[selectedImage]}`}
+                  src={images[selectedImage]}
                   alt={`${alt} - Foto ${selectedImage + 1}`}
                   className="w-full h-auto max-h-[85vh] object-contain"
                 />

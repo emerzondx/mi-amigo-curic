@@ -5,6 +5,35 @@ import { Heart, Sparkles } from "lucide-react";
 import heroBanner from "@/assets/hero-banner.jpg";
 
 const Index = () => {
+  const { isAdmin } = useAuth();
+  const [dogs, setDogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchDogs();
+  }, []);
+
+  const fetchDogs = async () => {
+    const { data, error } = await supabase
+      .from('dogs')
+      .select(`
+        *,
+        dog_images (id, image_url, display_order)
+      `)
+      .eq('status', 'available')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching dogs:', error);
+    } else {
+      setDogs(data.map(dog => ({
+        ...dog,
+        images: dog.dog_images?.map((img: any) => img.image_url) || []
+      })));
+    }
+    setLoading(false);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
