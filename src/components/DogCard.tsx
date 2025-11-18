@@ -1,15 +1,24 @@
 import { Link } from "react-router-dom";
-import { Dog } from "@/data/dogs";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter } from "./ui/card";
 import { Badge } from "./ui/badge";
 
 interface DogCardProps {
-  dog: Dog;
+  dog: {
+    id: string;
+    name: string;
+    breed: string;
+    age: string;
+    gender: string;
+    personality: string[];
+    story: string;
+    image?: string;
+    images?: string[];
+  };
 }
 
 export const DogCard = ({ dog }: DogCardProps) => {
-  const mainImage = `/src/assets/${dog.images[0]}`;
+  const mainImage = dog.image || (dog.images ? `/src/assets/${dog.images[0]}` : "");
 
   return (
     <Card className="group overflow-hidden border-border transition-all duration-300 hover:shadow-[var(--shadow-soft)] animate-fade-in">

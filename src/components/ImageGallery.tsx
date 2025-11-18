@@ -5,10 +5,10 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 interface ImageGalleryProps {
   images: string[];
-  alt: string;
+  alt?: string;
 }
 
-export const ImageGallery = ({ images, alt }: ImageGalleryProps) => {
+export const ImageGallery = ({ images, alt = "Perro" }: ImageGalleryProps) => {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
   const openLightbox = (index: number) => {
@@ -42,7 +42,7 @@ export const ImageGallery = ({ images, alt }: ImageGalleryProps) => {
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             <img
-              src={`/src/assets/${image}`}
+              src={image.startsWith('http') ? image : `/src/assets/${image}`}
               alt={`${alt} - Foto ${index + 1}`}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
             />
@@ -66,7 +66,7 @@ export const ImageGallery = ({ images, alt }: ImageGalleryProps) => {
             {selectedImage !== null && (
               <>
                 <img
-                  src={`/src/assets/${images[selectedImage]}`}
+                  src={images[selectedImage].startsWith('http') ? images[selectedImage] : `/src/assets/${images[selectedImage]}`}
                   alt={`${alt} - Foto ${selectedImage + 1}`}
                   className="w-full h-auto max-h-[85vh] object-contain"
                 />
