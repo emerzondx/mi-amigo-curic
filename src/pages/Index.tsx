@@ -1,10 +1,75 @@
-import { dogs } from "@/data/dogs";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { DogCard } from "@/components/DogCard";
 import { Button } from "@/components/ui/button";
-import { Heart, Sparkles } from "lucide-react";
+import { Heart, Sparkles, Shield } from "lucide-react";
+import { Link } from "react-router-dom";
 import heroBanner from "@/assets/hero-banner.jpg";
 
+interface Dog {
+  id: string;
+  name: string;
+  breed: string;
+  age: string;
+  gender: string;
+  size: string;
+  personality: string[];
+  story: string;
+  image: string;
+}
+
 const Index = () => {
+  const { isAdmin } = useAuth();
+  const [dogs, setDogs] = useState<Dog[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchDogs();
+  }, []);
+
+  const fetchDogs = async () => {
+    try {
+      const { data: dogsData, error: dogsError } = await supabase
+        .from("dogs")
+        .select("*")
+        .eq("status", "available")
+        .order("created_at", { ascending: false });
+
+      if (dogsError) throw dogsError;
+
+      const dogsWithImages = await Promise.all(
+        (dogsData || []).map(async (dog) => {
+          const { data: imageData } = await supabase
+            .from("dog_images")
+            .select("image_url")
+            .eq("dog_id", dog.id)
+            .order("display_order")
+            .limit(1)
+            .single();
+
+          return {
+            id: dog.id,
+            name: dog.name,
+            breed: dog.breed,
+            age: dog.age,
+            gender: dog.gender,
+            size: dog.size,
+            personality: dog.personality,
+            story: dog.story,
+            image: imageData?.image_url || "",
+          };
+        })
+      );
+
+      setDogs(dogsWithImages);
+    } catch (error) {
+      console.error("Error fetching dogs:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -42,6 +107,14 @@ const Index = () => {
                 <Heart className="mr-2 h-5 w-5" />
                 Conocer a Nuestros Perritos
               </Button>
+              {isAdmin && (
+                <Button size="lg" variant="outline" asChild>
+                  <Link to="/admin">
+                    <Shield className="mr-2 h-5 w-5" />
+                    Panel Admin
+                  </Link>
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -59,17 +132,29 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {dogs.map((dog, index) => (
-              <div
-                key={dog.id}
-                className="animate-slide-up"
-                style={{ animationDelay: `${index * 0.15}s` }}
-              >
-                <DogCard dog={dog} />
-              </div>
-            ))}
-          </div>
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Cargando perritos...</p>
+            </div>
+          ) : dogs.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">
+                No hay perritos disponibles para adopción en este momento
+              </p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+              {dogs.map((dog, index) => (
+                <div
+                  key={dog.id}
+                  className="animate-slide-up"
+                  style={{ animationDelay: `${index * 0.15}s` }}
+                >
+                  <DogCard dog={dog} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

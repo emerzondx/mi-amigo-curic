@@ -1,15 +1,71 @@
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { dogs } from "@/data/dogs";
+import { supabase } from "@/integrations/supabase/client";
 import { ImageGallery } from "@/components/ImageGallery";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Heart, Share2, MapPin, Calendar, Ruler } from "lucide-react";
+import { ArrowLeft, Heart, Share2, Calendar, Ruler } from "lucide-react";
 import { toast } from "sonner";
+
+interface Dog {
+  id: string;
+  name: string;
+  breed: string;
+  age: string;
+  gender: string;
+  size: string;
+  personality: string[];
+  story: string;
+}
 
 const DogProfile = () => {
   const { id } = useParams();
-  const dog = dogs.find((d) => d.id === id);
+  const [dog, setDog] = useState<Dog | null>(null);
+  const [images, setImages] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (id) {
+      fetchDogData();
+    }
+  }, [id]);
+
+  const fetchDogData = async () => {
+    try {
+      const { data: dogData, error: dogError } = await supabase
+        .from("dogs")
+        .select("*")
+        .eq("id", id)
+        .eq("status", "available")
+        .single();
+
+      if (dogError) throw dogError;
+
+      const { data: imagesData, error: imagesError } = await supabase
+        .from("dog_images")
+        .select("image_url")
+        .eq("dog_id", id)
+        .order("display_order");
+
+      if (imagesError) throw imagesError;
+
+      setDog(dogData);
+      setImages(imagesData?.map((img) => img.image_url) || []);
+    } catch (error) {
+      console.error("Error fetching dog:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <p className="text-muted-foreground">Cargando...</p>
+      </div>
+    );
+  }
 
   if (!dog) {
     return (
@@ -126,32 +182,52 @@ const DogProfile = () => {
               </CardContent>
             </Card>
 
-            <div className="space-y-4">
-              <Button size="lg" className="w-full text-lg" onClick={handleAdopt}>
-                <Heart className="mr-2 h-5 w-5" />
-                Quiero Adoptar a {dog.name}
-              </Button>
-              
-              <Card className="bg-muted/50">
-                <CardContent className="p-4 flex items-start gap-3">
-                  <MapPin className="h-5 w-5 text-primary mt-0.5" />
-                  <div>
-                    <p className="font-semibold mb-1">Refugio Municipal de Curicó</p>
-                    <p className="text-sm text-muted-foreground">
-                      Visítanos para conocer a {dog.name} y comenzar el proceso de adopción
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            <Button
+              size="lg"
+              className="w-full text-lg"
+              onClick={handleAdopt}
+            >
+              <Heart className="mr-2 h-5 w-5" />
+              Quiero Adoptarlo
+            </Button>
           </div>
 
-          {/* Gallery */}
-          <div className="animate-slide-up">
-            <h2 className="text-2xl font-bold mb-6">Galería de Fotos</h2>
-            <ImageGallery images={dog.images} alt={dog.name} />
+          {/* Image Gallery */}
+          <div className="animate-fade-in md:sticky md:top-24 self-start">
+            {images.length > 0 ? (
+              <ImageGallery images={images} />
+            ) : (
+              <Card>
+                <CardContent className="p-12 text-center">
+                  <p className="text-muted-foreground">
+                    No hay imágenes disponibles
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
+
+        {/* Additional Info */}
+        <Card className="bg-primary/5 border-primary/20">
+          <CardContent className="p-8">
+            <h2 className="text-2xl font-bold text-foreground mb-4">
+              ¿Listo para Adoptar?
+            </h2>
+            <p className="text-muted-foreground mb-6 leading-relaxed">
+              Visítanos en el Refugio Municipal de Curicó para conocer a {dog.name} en persona.
+              Nuestro equipo te ayudará con todo el proceso de adopción y responderá todas tus preguntas.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button size="lg" onClick={handleAdopt}>
+                Iniciar Proceso de Adopción
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link to="/">Ver Más Perritos</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );
