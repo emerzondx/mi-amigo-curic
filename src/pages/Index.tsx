@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { DogCard } from "@/components/DogCard";
 import { Button } from "@/components/ui/button";
-import { Heart, Sparkles, Shield } from "lucide-react";
+import { Heart, Sparkles, Shield, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroBanner from "@/assets/hero-banner.jpg";
 
@@ -72,6 +72,25 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Header with Admin Login */}
+      <header className="fixed top-0 right-0 z-50 p-4">
+        {isAdmin ? (
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/admin">
+              <Shield className="mr-2 h-4 w-4" />
+              Panel Admin
+            </Link>
+          </Button>
+        ) : (
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/auth">
+              <LogIn className="mr-2 h-4 w-4" />
+              Iniciar Sesión
+            </Link>
+          </Button>
+        )}
+      </header>
+
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[var(--gradient-hero)]" />
@@ -107,14 +126,6 @@ const Index = () => {
                 <Heart className="mr-2 h-5 w-5" />
                 Conocer a Nuestros Perritos
               </Button>
-              {isAdmin && (
-                <Button size="lg" variant="outline" asChild>
-                  <Link to="/admin">
-                    <Shield className="mr-2 h-5 w-5" />
-                    Panel Admin
-                  </Link>
-                </Button>
-              )}
             </div>
           </div>
         </div>
