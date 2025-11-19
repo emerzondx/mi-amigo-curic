@@ -4,11 +4,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AdminLayout } from "@/components/admin/AdminLayout";
 import Index from "./pages/Index";
 import DogProfile from "./pages/DogProfile";
 import Auth from "./pages/Auth";
-import AdminDashboard from "./pages/AdminDashboard";
-import AdminDogList from "./pages/AdminDogList";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminDogList from "./pages/admin/AdminDogList";
 import AdminDogForm from "./pages/AdminDogForm";
 import NotFound from "./pages/NotFound";
 
@@ -25,10 +26,12 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/perro/:id" element={<DogProfile />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/dogs" element={<AdminDogList />} />
-            <Route path="/admin/dogs/new" element={<AdminDogForm />} />
-            <Route path="/admin/dogs/edit/:id" element={<AdminDogForm />} />
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="dogs" element={<AdminDogList />} />
+              <Route path="dogs/new" element={<AdminDogForm />} />
+              <Route path="dogs/edit/:id" element={<AdminDogForm />} />
+            </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

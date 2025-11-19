@@ -1,23 +1,22 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Heart, Upload, X } from "lucide-react";
+import { X, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const AdminDogForm = () => {
-  const { user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditing = !!id;
 
   const [loading, setLoading] = useState(false);
+  const [fetchingData, setFetchingData] = useState(false);
   const [name, setName] = useState("");
   const [breed, setBreed] = useState("");
   const [age, setAge] = useState("");
@@ -30,18 +29,13 @@ const AdminDogForm = () => {
   const [existingImages, setExistingImages] = useState<{ id: string; url: string }[]>([]);
 
   useEffect(() => {
-    if (!authLoading && (!user || !isAdmin)) {
-      navigate("/auth");
-    }
-  }, [user, isAdmin, authLoading, navigate]);
-
-  useEffect(() => {
-    if (isEditing && user && isAdmin) {
+    if (isEditing) {
       fetchDogData();
     }
-  }, [isEditing, user, isAdmin]);
+  }, [isEditing]);
 
   const fetchDogData = async () => {
+    setFetchingData(true);
     try {
       const { data: dogData, error: dogError } = await supabase
         .from("dogs")
@@ -73,6 +67,8 @@ const AdminDogForm = () => {
     } catch (error) {
       console.error("Error fetching dog:", error);
       toast.error("Error al cargar los datos del perrito");
+    } finally {
+      setFetchingData(false);
     }
   };
 
@@ -174,38 +170,32 @@ const AdminDogForm = () => {
     }
   };
 
-  if (authLoading) {
+  if (fetchingData) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="text-center py-12">
         <p className="text-muted-foreground">Cargando...</p>
       </div>
     );
   }
 
-  if (!user || !isAdmin) {
-    return null;
-  }
-
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Heart className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-bold text-foreground">
-              {isEditing ? "Editar Perrito" : "Agregar Nuevo Perrito"}
-            </h1>
-          </div>
-          <Button variant="outline" asChild>
-            <Link to="/admin/dogs">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver a la Lista
-            </Link>
-          </Button>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-foreground">
+            {isEditing ? "Editar Perrito" : "Agregar Nuevo Perrito"}
+          </h2>
+          <p className="text-muted-foreground">
+            {isEditing ? "Actualiza la información del perrito" : "Registra un nuevo perrito en el refugio"}
+          </p>
         </div>
-      </header>
+        <Button variant="outline" onClick={() => navigate("/admin/dogs")}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Volver
+        </Button>
+      </div>
 
-      <main className="container mx-auto px-4 py-8 max-w-2xl">
+      <div className="max-w-2xl">
         <Card>
           <CardHeader>
             <CardTitle>Información del Perrito</CardTitle>
@@ -378,7 +368,7 @@ const AdminDogForm = () => {
             </form>
           </CardContent>
         </Card>
-      </main>
+      </div>
     </div>
   );
 };
