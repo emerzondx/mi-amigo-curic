@@ -210,12 +210,23 @@ const Index = () => {
               <p className="text-muted-foreground mb-2">
                 Dando amor y hogar a los mejores amigos del hombre
               </p>
-              <div className="mt-4 space-y-2">
-                <p className="text-foreground font-semibold">Dirección:</p>
-                <p className="text-muted-foreground">
-                  Carmen 1290, Curicó<br />
-                  Región del Maule, Chile
-                </p>
+              <div className="mt-4 space-y-3">
+                <div>
+                  <p className="text-foreground font-semibold">Dirección:</p>
+                  <p className="text-muted-foreground">
+                    Carmen 1290, Curicó<br />
+                    Región del Maule, Chile
+                  </p>
+                </div>
+                <div>
+                  <p className="text-foreground font-semibold">Teléfono:</p>
+                  <a 
+                    href="tel:+56939200250" 
+                    className="text-primary hover:underline"
+                  >
+                    +56 9 3920 0250
+                  </a>
+                </div>
               </div>
             </div>
             
