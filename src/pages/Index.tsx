@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Heart, Sparkles, Shield, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroBanner from "@/assets/hero-banner.jpg";
+import { AdoptionInfoModal } from "@/components/AdoptionInfoModal";
 
 interface Dog {
   id: string;
@@ -23,6 +24,7 @@ const Index = () => {
   const { isAdmin } = useAuth();
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [adoptionModalOpen, setAdoptionModalOpen] = useState(false);
 
   useEffect(() => {
     fetchDogs();
@@ -180,9 +182,18 @@ const Index = () => {
               La adopción es un acto de amor que cambia dos vidas: la del perrito que adoptas
               y la tuya. Visítanos en el Refugio Municipal de Curicó y conoce a tu nuevo mejor amigo.
             </p>
-            <Button size="lg" variant="default" className="text-lg">
+            <Button 
+              size="lg" 
+              variant="default" 
+              className="text-lg"
+              onClick={() => setAdoptionModalOpen(true)}
+            >
               Información sobre Adopción
             </Button>
+            <AdoptionInfoModal 
+              open={adoptionModalOpen} 
+              onOpenChange={setAdoptionModalOpen} 
+            />
           </div>
         </div>
       </section>
