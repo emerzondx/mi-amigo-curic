@@ -200,18 +200,45 @@ const Index = () => {
 
       {/* Footer */}
       <footer className="bg-card border-t border-border py-12">
-        <div className="container mx-auto px-4 text-center">
-          <div className="mb-4">
-            <h3 className="text-xl font-bold text-foreground mb-2">
-              Refugio Municipal de Curicó
-            </h3>
-            <p className="text-muted-foreground">
-              Dando amor y hogar a los mejores amigos del hombre
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {/* Address and Info */}
+            <div className="text-center md:text-left">
+              <h3 className="text-xl font-bold text-foreground mb-4">
+                Refugio Municipal de Curicó
+              </h3>
+              <p className="text-muted-foreground mb-2">
+                Dando amor y hogar a los mejores amigos del hombre
+              </p>
+              <div className="mt-4 space-y-2">
+                <p className="text-foreground font-semibold">Dirección:</p>
+                <p className="text-muted-foreground">
+                  Carmen 1290, Curicó<br />
+                  Región del Maule, Chile
+                </p>
+              </div>
+            </div>
+            
+            {/* Map */}
+            <div className="rounded-lg overflow-hidden shadow-lg h-64">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3260.8747836547743!2d-71.2315135!3d-34.9954843!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x96645766196feb4d%3A0x4e6915a0aff745ee!2sCanil%20municipal!5e0!3m2!1sen!2scl!4v1234567890"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Ubicación del Refugio Municipal de Curicó"
+              />
+            </div>
+          </div>
+          
+          <div className="text-center mt-8 pt-8 border-t border-border">
+            <p className="text-sm text-muted-foreground">
+              © 2024 Refugio Municipal de Curicó. Todos los derechos reservados.
             </p>
           </div>
-          <p className="text-sm text-muted-foreground">
-            © 2024 Refugio Municipal de Curicó. Todos los derechos reservados.
-          </p>
         </div>
       </footer>
     </div>
