@@ -118,6 +118,30 @@ const AdminDogForm = () => {
           .eq("id", id);
 
         if (updateError) throw updateError;
+
+        // Upload new images for editing
+        const currentImageCount = existingImages.length;
+        for (let i = 0; i < images.length; i++) {
+          const file = images[i];
+          const fileExt = file.name.split(".").pop();
+          const fileName = `${id}/${Math.random()}.${fileExt}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from("dog-images")
+            .upload(fileName, file);
+
+          if (uploadError) throw uploadError;
+
+          const { data: { publicUrl } } = supabase.storage
+            .from("dog-images")
+            .getPublicUrl(fileName);
+
+          await supabase.from("dog_images").insert({
+            dog_id: id,
+            image_url: publicUrl,
+            display_order: currentImageCount + i,
+          });
+        }
       } else {
         const { data: dogData, error: insertError } = await supabase
           .from("dogs")
@@ -299,39 +323,6 @@ const AdminDogForm = () => {
                 </Select>
               </div>
 
-              {!isEditing && (
-                <div className="space-y-2">
-                  <Label htmlFor="images">Imágenes (6 máximo)</Label>
-                  <Input
-                    id="images"
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageChange}
-                  />
-                  <div className="grid grid-cols-3 gap-2 mt-2">
-                    {images.map((image, index) => (
-                      <div key={index} className="relative">
-                        <img
-                          src={URL.createObjectURL(image)}
-                          alt={`Preview ${index + 1}`}
-                          className="w-full h-24 object-cover rounded"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="sm"
-                          className="absolute top-1 right-1"
-                          onClick={() => removeImage(index)}
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {isEditing && existingImages.length > 0 && (
                 <div className="space-y-2">
                   <Label>Imágenes Actuales</Label>
@@ -357,6 +348,39 @@ const AdminDogForm = () => {
                   </div>
                 </div>
               )}
+
+              <div className="space-y-2">
+                <Label htmlFor="images">{isEditing ? "Agregar Nuevas Imágenes" : "Imágenes (6 máximo)"}</Label>
+                <Input
+                  id="images"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageChange}
+                />
+                {images.length > 0 && (
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    {images.map((image, index) => (
+                      <div key={index} className="relative">
+                        <img
+                          src={URL.createObjectURL(image)}
+                          alt={`Preview ${index + 1}`}
+                          className="w-full h-24 object-cover rounded"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          className="absolute top-1 right-1"
+                          onClick={() => removeImage(index)}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
 
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading
