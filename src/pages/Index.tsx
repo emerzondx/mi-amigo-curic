@@ -214,8 +214,8 @@ const Index = () => {
                 <div>
                   <p className="text-foreground font-semibold">Dirección:</p>
                   <p className="text-muted-foreground">
-                    Carmen 1290, Curicó<br />
-                    Región del Maule, Chile
+                    Unnamed Road, Curicó<br />
+                    Maule, Chile
                   </p>
                 </div>
                 <div>
