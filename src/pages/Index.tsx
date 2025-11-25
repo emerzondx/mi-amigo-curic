@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { DogCard } from "@/components/DogCard";
 import { Button } from "@/components/ui/button";
-import { Heart, Sparkles, Shield, LogIn } from "lucide-react";
+import { Heart, Sparkles, Shield, LogIn, Instagram } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroBanner from "@/assets/hero-banner.jpg";
 import { AdoptionInfoModal } from "@/components/AdoptionInfoModal";
@@ -245,7 +245,18 @@ const Index = () => {
             </div>
           </div>
           
-          <div className="text-center mt-8 pt-8 border-t border-border">
+          <div className="text-center mt-8 pt-8 border-t border-border space-y-4">
+            <div className="flex justify-center gap-4">
+              <a
+                href="https://www.instagram.com/muni.curico/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram className="h-6 w-6" />
+              </a>
+            </div>
             <p className="text-sm text-muted-foreground">
               © 2024 Refugio Municipal de Curicó. Todos los derechos reservados.
             </p>
