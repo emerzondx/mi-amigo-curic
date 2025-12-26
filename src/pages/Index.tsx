@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { DogCard } from "@/components/DogCard";
 import { Button } from "@/components/ui/button";
-import { Heart, Sparkles, Shield, LogIn, Instagram } from "lucide-react";
+import { Heart, Sparkles, Shield, LogIn, Instagram, Facebook, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroBanner from "@/assets/hero-banner.jpg";
 import { AdoptionInfoModal } from "@/components/AdoptionInfoModal";
@@ -74,6 +74,16 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Floating WhatsApp Button */}
+      <a
+        href="https://wa.me/56939200250"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+        aria-label="Contactar por WhatsApp"
+      >
+        <MessageCircle className="h-6 w-6" />
+      </a>
       {/* Header with Admin Login */}
       <header className="fixed top-0 right-0 z-50 p-4">
         {isAdmin ? (
@@ -247,6 +257,15 @@ const Index = () => {
           
           <div className="text-center mt-8 pt-8 border-t border-border space-y-4">
             <div className="flex justify-center gap-4">
+              <a
+                href="https://www.facebook.com/MunicipalidadCurico"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Facebook"
+              >
+                <Facebook className="h-6 w-6" />
+              </a>
               <a
                 href="https://www.instagram.com/muni.curico/"
                 target="_blank"
